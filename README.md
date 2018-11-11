@@ -1,5 +1,5 @@
 # RealDeviceMap-Hive
-Multi-instance manager assistance for RealDeviceMap
+Multi-instance manager assistant for RealDeviceMap
 
 # Installation
 1. Open a terminal and run `git clone https://github.com/AnnexMap/RealDeviceMap-Hive.git`.
