@@ -8,7 +8,7 @@ devices = {} # DON'T EDIT
 # 2. EDIT THIS
 # Add devices and options
 # EXAMPLE:
-# devices['uuid_example_1'] = {'ilocation':'192.168.0.45','account_manager':True}
+# devices['uuid_example_1'] = {'ilocation':'192.168.0.45','account_manager':True,'nickname':'south-side'}
 #
 devices['example_uuid_01'] = {}
 devices['example_uuid_02'] = {}
