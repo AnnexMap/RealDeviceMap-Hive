@@ -10,8 +10,8 @@ devices = {} # DON'T EDIT
 # EXAMPLE:
 # devices['uuid_example_1'] = {'ilocation':'192.168.0.45','account_manager':True,'nickname':'south-side'}
 #
-devices['example_uuid_01'] = {}
-devices['example_uuid_02'] = {}
+devices['abc_example_uuid_01'] = {}
+devices['dec_example_uuid_02'] = {}
 
 # 3. OPTIONAL EDIT
 # Url of git repo to pull for instances
