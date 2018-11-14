@@ -7,6 +7,11 @@ from subprocess import call
 import fileinput
 from config import *
 
+def processDevices(devices):
+	for deviceUUID, device in devices.items():
+		if not 'nickname' in device:
+			device['nickname'] = deviceUUID[:8]
+
 
 def editFile(file_path, target, new_value):
 	print('Editing file: ' + file_path)
@@ -23,8 +28,8 @@ def editFile(file_path, target, new_value):
 		file.write(filedata)
 
 
-def getDirName(uuid):
-	return relPath + "{}-RDM".format(uuid[:8])
+def getDirName(nickname):
+	return relPath + "{}-RDM".format(nickname)
 
 
 def remove_readonly(func, path, excinfo):
@@ -47,21 +52,22 @@ def buildAll(devices):
 	numDevices = len(devices)
 	numDone = 1
 
-	for device in devices:
+	for deviceUUID, device in devices.items():
+		deviceName = device['nickname']
 		print('Building instance {} out of {}'.format(numDone, numDevices))
 
-		dir = getDirName(device)
+		dir = getDirName(deviceName)
 		build(dir)
-		editFile(dir + '/RealDeviceMap-UIControl/Config.swift', 'DEVICE_UUID', device)
+		editFile(dir + '/RealDeviceMap-UIControl/Config.swift', 'DEVICE_UUID', deviceName)
 		editFile(dir + '/RealDeviceMap-UIControl/Config.swift', 'http://RDM_UO:9001', backendURLBaseString)
-		editFile(dir + '/run.py','DEVICE_UUID', device)
+		editFile(dir + '/run.py','DEVICE_UUID', deviceUUID)
 		
-		if isinstance(devices[device],dict) and 'account_manager' in devices[device] and devices[device]['account_manager'] == True:
+		if isinstance(device,dict) and 'account_manager' in device and device['account_manager'] == True:
 			editFile(dir + '/RealDeviceMap-UIControl/Config.swift', 'class Config: ConfigProto {', 'class Config: ConfigProto {\n\tvar enableAccountManager = true\n')
 			
-		if isinstance(devices[device],dict) and 'ilocation' in devices[device]:
-			editFile(dir + '/spoof.py','DEVICE_UUID', device)
-			editFile(dir + '/spoof.py','http://DEVICE_IP:8080/loc', 'http://{}:8080/loc'.format(devices[device]['ilocation']))
+		if isinstance(device,dict) and 'ilocation' in device:
+			editFile(dir + '/spoof.py','DEVICE_UUID', deviceUUID)
+			editFile(dir + '/spoof.py','http://DEVICE_IP:8080/loc', 'http://{}:8080/loc'.format(device['ilocation']))
 
 		os.chdir(dir)
 		print('Running pod install...')
@@ -107,17 +113,18 @@ def startAll(devices):
 	numDevices = len(devices)
 	numDone = 1
 
-	for device in devices:
-		print('Initializing {}...'.format(device))
+	for deviceUUID, device in devices.items():
+		deviceName = device['nickname']
+		print('Initializing {}...'.format(deviceName))
 		print('Instance {} out of {}'.format(numDone, numDevices))
-		dir = getDirName(device)
+		dir = getDirName(deviceName)
 
-		launchScript = device[:8] + ".launch.command"
+		launchScript = deviceName + ".launch.command"
 
 		print('Launching run.py...')
 		launch(launchScript, 'run.py', dir)
 
-		if isinstance(devices[device],dict) and 'ilocation' in devices[device]:
+		if isinstance(device,dict) and 'ilocation' in device:
 			print('Launching spoof.py...')
 			time.sleep(5)
 			launch(launchScript, 'spoof.py', dir)
@@ -127,3 +134,5 @@ def startAll(devices):
 			time.sleep(startDelay)
 		
 		numDone += 1
+
+processDevices(devices)
