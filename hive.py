@@ -7,6 +7,14 @@ if "-make" in sys.argv:
 elif "-build" in sys.argv:
 	buildAll(devices)
 
+elif "-build_one" in sys.argv:
+	device_id = sys.argv.pop()
+	if device_id in devices:
+		device = {device_id : devices[device_id]}
+		buildAll(device)
+	else:
+		print("Device not found")
+
 elif "-start" in sys.argv:
 	startAll(devices)
 
