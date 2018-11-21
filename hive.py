@@ -8,23 +8,25 @@ elif "-build" in sys.argv:
 	buildAll(devices)
 
 elif "-build_one" in sys.argv:
-	device_id = sys.argv.pop()
-	if device_id in devices:
-		device = {device_id : devices[device_id]}
-		buildAll(device)
-	else:
+	deviceId = getDeviceId(sys.argv.pop())
+
+	if deviceId is None:
 		print("Device not found")
+	else:
+		device = {deviceId : devices[deviceId]}
+		buildAll(device)
 
 elif "-start" in sys.argv:
 	startAll(devices)
 
 elif "-start_one" in sys.argv:
-	device_id = sys.argv.pop()
-	if device_id in devices:
-		device = {device_id : devices[device_id]}
-		startAll(device)
-	else:
+	deviceId = getDeviceId(sys.argv.pop())
+
+	if deviceId is None:
 		print("Device not found")
+	else:
+		device = {deviceId : devices[deviceId]}
+		startAll(device)
 
 else:
 	print("\nHive for RealDeviceMap")

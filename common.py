@@ -135,4 +135,18 @@ def startAll(devices):
 		
 		numDone += 1
 
+
+def getDeviceId(device_id):
+	if device_id in devices:
+		# UUID found
+		return device_id
+	else:
+		# Look for nickname instead
+		for deviceUUID, device in devices.items():
+			if device['nickname'] == device_id:
+				# UUID found
+				return deviceUUID
+	return None
+
+
 processDevices(devices)
