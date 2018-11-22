@@ -28,6 +28,32 @@ elif "-start_one" in sys.argv:
 		device = {deviceId : devices[deviceId]}
 		startAll(device)
 
+elif "-stop" in sys.argv:
+	stopAll(devices)
+
+elif "-stop_one" in sys.argv:
+	deviceId = getDeviceId(sys.argv.pop())
+
+	if deviceId is None:
+		print("Device not found")
+	else:
+		device = {deviceId : devices[deviceId]}
+		stopAll(device)
+
+elif "-restart" in sys.argv:
+	stopAll(devices)
+	startAll(devices)
+
+elif "-restart_one" in sys.argv:
+	deviceId = getDeviceId(sys.argv.pop())
+
+	if deviceId is None:
+		print("Device not found")
+	else:
+		device = {deviceId : devices[deviceId]}
+		stopAll(device)
+		startAll(device)
+
 else:
 	print("\nHive for RealDeviceMap")
 	print("\nUsage: python hive.py -make -build -start")

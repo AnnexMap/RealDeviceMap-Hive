@@ -93,14 +93,14 @@ def build(dir):
 	os.system("git clone " + repoUrl + " ./" + dir)
 
 
-def launch(bashScript, script, dir):
+def launch(bashScript, script, dir, sessionName):
 	scriptData = """
 	#!/bin/bash
 	cd {0}
 	cd {1}
 	echo "Launching {2}..."
-	python {2}
-	""".format(os.path.dirname(os.path.realpath(__file__)), dir, script)
+	screen -S {3} python {2}
+	""".format(os.path.dirname(os.path.realpath(__file__)), dir, script, sessionName)
 
 	with open(bashScript, 'w') as file:
 		file.write(scriptData)
@@ -122,7 +122,10 @@ def startAll(devices):
 		launchScript = deviceName + ".launch.command"
 
 		print('Launching run.py...')
-		launch(launchScript, 'run.py', dir)
+		#os.chdir(dir)
+		#os.system('screen -dmS {} python run.py'.format(deviceName))
+		#os.chdir(os.path.dirname(os.path.realpath(__file__)))
+		launch(launchScript, 'run.py', dir, deviceName)
 
 		if isinstance(device,dict) and 'ilocation' in device:
 			print('Launching spoof.py...')
@@ -134,6 +137,19 @@ def startAll(devices):
 			time.sleep(startDelay)
 		
 		numDone += 1
+
+
+def stopAll(devices):
+	numDevices = len(devices)
+	numDone = 1
+
+	for deviceUUID, device in devices.items():
+		deviceName = device['nickname']
+		print('Stopping {}...'.format(deviceName))
+		print('Instance {} out of {}'.format(numDone, numDevices))
+
+		os.system('screen -X -S {} quit'.format(deviceName))
+		print('{} is stopped.'.format(deviceName))
 
 
 def getDeviceId(device_id):
