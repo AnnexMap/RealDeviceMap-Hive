@@ -52,12 +52,17 @@ def buildAll(devices):
 	numDevices = len(devices)
 	numDone = 1
 
+	baseInstanceDir = '../base-build-RDM'
+	if not "-no_clone" in sys.argv:
+		build(baseInstanceDir)
+
 	for deviceUUID, device in devices.items():
 		deviceName = device['nickname']
 		print('Building instance {} out of {}'.format(numDone, numDevices))
 
 		dir = getDirName(deviceName)
-		build(dir)
+		copyBuild(baseInstanceDir, dir)		
+
 		editFile(dir + '/RealDeviceMap-UIControl/Config.swift', 'DEVICE_UUID', deviceName)
 		editFile(dir + '/RealDeviceMap-UIControl/Config.swift', 'http://RDM_UO:9001', backendURLBaseString)
 		editFile(dir + '/run.py','DEVICE_UUID', deviceUUID)
@@ -91,6 +96,16 @@ def build(dir):
 
 	print("Cloning repo in {}...".format(dir))
 	os.system("git clone " + repoUrl + " ./" + dir)
+
+
+def copyBuild(srcDir, dstDir):
+	if os.path.exists(dstDir):
+		print("Deleting directory {}...".format(dstDir))
+		shutil.rmtree(dstDir, onerror=remove_readonly)
+
+	print("Copying repo in {}...".format(dstDir))
+	os.system("cp -R {} {}".format(srcDir, dstDir))
+
 
 
 def launch(bashScript, script, dir, sessionName):
