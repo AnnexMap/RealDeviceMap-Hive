@@ -165,7 +165,7 @@ def stopAll(devices):
 
 		os.system('screen -X -S {} quit'.format(deviceName))
 		print('{} is stopped.'.format(deviceName))
-
+		numDone += 1
 
 def getDeviceId(device_id):
 	if device_id in devices:
